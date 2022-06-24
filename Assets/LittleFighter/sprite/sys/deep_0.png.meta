@@ -68,7 +68,7 @@ TextureImporter:
     buildTarget: DefaultTexturePlatform
     maxTextureSize: 2048
     resizeAlgorithm: 0
-    textureFormat: -1
+    textureFormat: 4
     textureCompression: 1
     compressionQuality: 50
     crunchedCompression: 0
@@ -1626,7 +1626,6 @@ TextureImporter:
     weights: []
     secondaryTextures: []
     nameFileIdTable:
-      deep_0_71: -756968591
       deep_0_55: -1982197430
       deep_0_16: 522536953
       deep_0_47: 3029404
@@ -1694,6 +1693,7 @@ TextureImporter:
       deep_0_59: -1297714262
       deep_0_27: 1660832523
       deep_0_4: -328038570
+      deep_0_71: -756968591
       deep_0_21: -1645974133
       deep_0_23: 1007386024
       deep_0_49: -222478545
