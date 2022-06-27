@@ -6,12 +6,15 @@ public abstract class Actor : MonoBehaviour
 {
     #region 資料:保存系統需要的資料
 
-    protected int Blood//血量
+     protected int Blood//血量
     {
         get; set;
     }
 
-    //private int mana
+    protected int Mana//魔力
+    {
+        get;set;
+    }
     #endregion
 
 
