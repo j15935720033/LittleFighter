@@ -2,19 +2,22 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public abstract class Actor : MonoBehaviour
+public abstract class Role : MonoBehaviour
 {
     #region 資料:保存系統需要的資料
+    private int blood=500;
+    private int mana=500;
 
-     protected int Blood//血量
+    protected int Blood
     {
-        get; set;
-    }
-
-    protected int Mana//魔力
+        get { return blood; }
+        set { blood = value; }
+    }//血量
+    protected int Mana
     {
-        get;set;
-    }
+        get { return mana; }
+        set { mana = value; }
+    }//魔力
     #endregion
 
 
@@ -42,6 +45,11 @@ public abstract class Actor : MonoBehaviour
     {
 
     }
+
+    abstract protected  void Walk();
+ 
+
+
     #endregion
 
 }
