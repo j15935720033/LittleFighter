@@ -35,6 +35,11 @@ public class deep : Role
     {
         
     }
+
+
+
+
+
     protected override void Walk()
     {
         //設定加速度，rig.velocity.y-->rig中原本y軸的加速度
