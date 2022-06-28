@@ -7,7 +7,7 @@ public abstract class Role : MonoBehaviour
     #region 資料:保存系統需要的資料
     private int blood=500;
     private int mana=500;
-
+   
     protected int Blood
     {
         get { return blood; }

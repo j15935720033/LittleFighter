@@ -6,7 +6,7 @@ public class Role_deep : Role
 {
     #region  屬性
     [SerializeField]
-    private float speedWalk;
+    private float speedWalk=350;
 
     private Animator animator;
     private Rigidbody2D rigidbody2D;
@@ -22,7 +22,7 @@ public class Role_deep : Role
         rigidbody2D = GetComponent<Rigidbody2D>();
 
 
-        transform = animator.GetComponent<Transform>();
+        transform = GetComponent<Transform>();
     }
     // Start is called before the first frame update
     void Start()
@@ -33,12 +33,17 @@ public class Role_deep : Role
     //更新事件:每秒執行約60次，60FPS Frame per second
     void Update()
     {
-        Walk();
+        //Walk();
+        speedWalk = Input.GetAxis("Horizontal") * speedWalk;
+        // Make it move 10 meters per second instead of 10 meters per frame...
+        speedWalk *= Time.deltaTime;
+        rigidbody2D.velocity = new Vector2(speedWalk, rigidbody2D.velocity.y);
+        //rigidbody2D.AddForce(new Vector2(speedWalk, rigidbody2D.velocity.y));
     }
     //一秒固定50次
     private void FixedUpdate()
     {
-        
+        //Walk();
     }
 
 
@@ -51,9 +56,9 @@ public class Role_deep : Role
         // Make it move 10 meters per second instead of 10 meters per frame...
         speedWalk *= Time.deltaTime;
         //rigidbody2D.velocity = new Vector2(speedWalk, rigidbody2D.velocity.y);
-        //rigidbody2D.AddForce(new Vector2(speedWalk, rigidbody2D.velocity.y));
+        rigidbody2D.AddForce(new Vector2(speedWalk, rigidbody2D.velocity.y));
         //設定加速度，rig.velocity.y-->rig中原本y軸的加速度
-        rigidbody2D.velocity=new Vector2(speedWalk, rigidbody2D.velocity.y);
+        //rigidbody2D.velocity=new Vector2(speedWalk, rigidbody2D.velocity.y);
     }
     #endregion
 
