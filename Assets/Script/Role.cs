@@ -45,10 +45,10 @@ public abstract class Role : MonoBehaviour
     {
 
     }
-
+    abstract protected void WalkKey();
     abstract protected  void Walk();
- 
-
+    abstract protected void JumpKey();
+    abstract protected void Jump();
 
     #endregion
 
