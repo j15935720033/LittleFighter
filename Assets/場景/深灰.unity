@@ -401,7 +401,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 59a222893ac719e40a937ffeac8ab9b3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  speedWalk: 10
+  speedWalk: 350
   heightJump: 350
 --- !u!1001 &828770303
 PrefabInstance:
