@@ -1,33 +1,36 @@
-using System.Collections;
+ï»¿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class Role_deep : Role
 {
-    #region  Äİ©Ê
-    [SerializeField]
-    private float speedWalk = 350;
-    [SerializeField]
-    private float heightJump = 350;
-    private Animator animator;
-    private Rigidbody2D rigidbody2D;
-    private Transform trans;
+    #region  å±¬æ€§
 
+    [SerializeField]
+    private float speedWalk = 500;
+    [SerializeField]
+    private float jumpForce = 250;
+
+
+    private Animator animator;
+    private Rigidbody2D rig2D;
+    private Transform trans;
+    private Collider2D coll2D;
     private bool clickWalk;
     private bool clickJump;
     #endregion
 
-    #region ¨Æ¥ó:µ{¦¡¤J¤f
-    //³ê¿ô¨Æ¥ó:¶}©l¨Æ¥ó«e°õ¦æ¤@¦¸¡A¡A¨ú±o¤¸¥óµ¥µ¥
+    #region äº‹ä»¶:ç¨‹å¼å…¥å£
+    //å–šé†’äº‹ä»¶:é–‹å§‹äº‹ä»¶å‰åŸ·è¡Œä¸€æ¬¡ï¼Œï¼Œå–å¾—å…ƒä»¶ç­‰ç­‰
     private void Awake()
     {
 
         animator = GetComponent<Animator>();
-        rigidbody2D = GetComponent<Rigidbody2D>();
+        rig2D = GetComponent<Rigidbody2D>();
 
 
         trans = GetComponent<Transform>();
-        print("constraints" + rigidbody2D.constraints);
+
     }
     // Start is called before the first frame update
     void Start()
@@ -35,18 +38,17 @@ public class Role_deep : Role
 
     }
 
-    //§ó·s¨Æ¥ó:¨C¬í°õ¦æ¬ù60¦¸¡A60FPS Frame per second
+    //æ›´æ–°äº‹ä»¶:æ¯ç§’åŸ·è¡Œç´„60æ¬¡ï¼Œ60FPS Frame per second
     void Update()
     {
         JumpKey();
-        //WalkKey();
         Walk();
     }
-    //¤@¬í©T©w50¦¸
+    //ä¸€ç§’å›ºå®š50æ¬¡ï¼Œç‰©ç†ç§»å‹•æ”¾é€™è£¡
     private void FixedUpdate()
     {
         Jump();
-       // Walk();
+        // Walk();
     }
 
 
@@ -54,60 +56,56 @@ public class Role_deep : Role
 
     protected override void WalkKey()
     {
-       // print("Horizontal"+Input.GetAxis("Horizontal"));
-        if (Input.GetAxis("Horizontal") != 0)
-        {
-            clickWalk = true;
-        }
-
 
     }
     protected override void Walk()
     {
 
-        //rigidbody2D.velocity = new Vector2(speedWalk, rigidbody2D.velocity.y);//³]©w¥[³t«×¡Arig.velocity.y-->rig¤¤­ì¥»y¶bªº¥[³t«×
-        print($"clickWalk:{clickWalk}");
-        print($"speedWalk:{speedWalk}");
-       
-            speedWalk = Input.GetAxis("Horizontal") * speedWalk;
-            speedWalk *= Time.deltaTime;
-            //rigidbody2D.AddForce(new Vector2(speedWalk, rigidbody2D.velocity.y));
-        Vector3 v3_1 = new Vector3(speedWalk, rigidbody2D.velocity.y, 0);
-        trans.Translate(v3_1 * Time.deltaTime);
-        //rigidbody2D.velocity = new Vector2(speedWalk, rigidbody2D.velocity.y);
+        #region Input.GetAxis 
+        float moveDir = Input.GetAxis("Horizontal");//å–å¾—-1~1
+        //float moveDir = Input.GetAxisRaw("Horizontal");
+
+        // Time.deltaTime:Make it move 10 meters per second instead of 10 meters per frame...
+
+        //****************ç§»å‹•æ–¹å¼*******************//
+        rig2D.velocity = new Vector2(moveDir * speedWalk * Time.deltaTime, rig2D.velocity.y);
+        //rig2D.AddForce(new Vector2(moveDir* speedWalk * Time.deltaTime,0));
+        //trans.Translate(new Vector3(moveDir * speedWalk * Time.deltaTime,0,0));
+        //****************äººç‰©è½‰å‘*******************//
+        if (moveDir > 0)
+        {
+            trans.localScale = new Vector2(1f, 1f);//å‘å·¦æ”¹å˜å›¾åƒæœå‘å·¦
+        }
+        else if (moveDir < 0)
+        {
+            trans.localScale = new Vector2(-1f, 1f);//å‘å·¦æ”¹å˜å›¾åƒæœå‘å·¦
+        }
+
+
+        #endregion
 
 
 
 
-
-        /*
-        speedWalk = Input.GetAxis("Horizontal")* speedWalk;
-        // Make it move 10 meters per second instead of 10 meters per frame...
-        speedWalk *= Time.deltaTime;
-        //rigidbody2D.velocity = new Vector2(speedWalk, rigidbody2D.velocity.y);
-        //³]©w¥[³t«×¡Arig.velocity.y-->rig¤¤­ì¥»y¶bªº¥[³t«×
-        //rigidbody2D.AddForce(new Vector2(speedWalk, rigidbody2D.velocity.y));
-        trans.Translate(new Vector3(speedWalk, rigidbody2D.velocity.y,0));
-        */
 
 
     }
 
-    //¦pªGª±®a«ö¤UªÅ¥ÕÁä´N©¹¤W¸õÅD
+    //å¦‚æœç©å®¶æŒ‰ä¸‹ç©ºç™½éµå°±å¾€ä¸Šè·³èº
     protected override void JumpKey()
     {
         if (Input.GetKeyDown(KeyCode.RightShift))
         {
-            print("¸õÅD");
+            print("è·³èº");
             clickJump = true;
         }
     }
-    //clickJump=true®Éµ¹¦V¤Wªº¤O¶q
+    //clickJump=trueæ™‚çµ¦å‘ä¸Šçš„åŠ›é‡
     protected override void Jump()
     {
         if (clickJump)
         {
-            rigidbody2D.AddForce(new Vector2(0, heightJump));
+            rig2D.AddForce(new Vector2(0, jumpForce));
             clickJump = false;
         }
     }
