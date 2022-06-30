@@ -10,14 +10,22 @@ public class Role_deep : Role
     private float speedWalk = 500;
     [SerializeField]
     private float jumpForce = 250;
-
+    [Space]
+    private LayerMask ground;
 
     private Animator animator;
     private Rigidbody2D rig2D;
     private Transform trans;
     private Collider2D coll2D;
-    private bool clickWalk;
+ 
     private bool clickJump;
+
+
+    //測試
+    [SerializeField]
+    private Transform groundCheck;
+    private int twoJump;
+    private bool isGround;//是否在地面上,預設是false
     #endregion
 
     #region 事件:程式入口
@@ -63,7 +71,7 @@ public class Role_deep : Role
 
         #region Input.GetAxis 
         float moveDir = Input.GetAxis("Horizontal");//取得-1~1
-        //float moveDir = Input.GetAxisRaw("Horizontal");
+        //float moveDir = Input.GetAxisRaw("Horizontal");//取得-1、0、1
 
         // Time.deltaTime:Make it move 10 meters per second instead of 10 meters per frame...
 
@@ -94,6 +102,7 @@ public class Role_deep : Role
     //如果玩家按下空白鍵就往上跳躍
     protected override void JumpKey()
     {
+
         if (Input.GetKeyDown(KeyCode.RightShift))
         {
             print("跳躍");
@@ -107,6 +116,46 @@ public class Role_deep : Role
         {
             rig2D.AddForce(new Vector2(0, jumpForce));
             clickJump = false;
+        }
+    }
+
+
+   
+     /*******測試*******/////
+     
+    void Crouch()
+    {/*
+        if (Input.GetButton("Crouch"))
+        {
+            //animator.SetBool("Crouch", true);
+            //DisColl.enabled = false;
+        }else if (!Physics2D.OverlapCircle(CellingCheck,ImagePosition,0.2f,ground))
+        {
+            //animator.SetBool("Crouch", true);//設定動畫控制
+            //DisColl.enabled = true;
+        }*/
+    }
+    void IsOnGround()//是否在地面  放在fixedUpdate
+    {
+
+        //isGround = Physics2D.OverlapCircle(groundPoint.position,0.2f, ground);//腳下的點:groundPoint.position  檢測範圍:0.2f  檢測哪個是地面:ground
+
+    }
+    void TwoJump()
+    {
+        if (isGround)//在地面上
+        {
+            twoJump = 2;
+        }
+        if (Input.GetKeyDown(KeyCode.RightShift) && twoJump > 0)//能跳躍次數
+        {
+            rig2D.velocity = Vector2.up * jumpForce;//Vector2.up 等於new Vector2(0,1)
+            twoJump -= 1;
+        }
+        if (Input.GetKeyDown(KeyCode.RightShift) && twoJump == 0 && isGround)
+        {
+            rig2D.velocity = Vector2.up * jumpForce;//Vector2.up 等於new Vector2(0,1)
+
         }
     }
     #endregion
