@@ -6,39 +6,43 @@ public class Role_deep : Role
 {
     #region  屬性
 
-    [SerializeField]
+    [SerializeField,Header("走路速度")]
     private float speedWalk = 500;
-    [SerializeField]
+    [SerializeField,Header("跳躍力量")]
     private float jumpForce = 250;
-    [Space]
-    private LayerMask ground;
+    [SerializeField, Header("檢查地板尺寸")]
+    private Vector3 v3CheckGroundSize;
+    [SerializeField, Header("檢查地板位移")]
+    private Vector3 v3CheckGroundOffset;
+    [SerializeField, Header("檢查地板顏色")]
+    private Color colorCheckGround = new Color(1,0,0.2f,0.5f);
+    [SerializeField, Header("檢查地板圖層")]
+    private LayerMask layerCheckGround;
+
 
     private Animator animator;
     private Rigidbody2D rig2D;
-    private Transform trans;
+    //private Transform trans;
     private Collider2D coll2D;
  
     private bool clickJump;
 
 
     //測試
-    [SerializeField]
-    private Transform groundCheck;
     private int twoJump;
     private bool isGround;//是否在地面上,預設是false
     #endregion
 
     #region 事件:程式入口
-    //喚醒事件:開始事件前執行一次，，取得元件等等
+    //喚醒事件:開始事件前執行一次，物件步開啟也會執行，取得元件等等
     private void Awake()
     {
 
         animator = GetComponent<Animator>();
         rig2D = GetComponent<Rigidbody2D>();
+        //trans = GetComponent<Transform>();
 
-
-        trans = GetComponent<Transform>();
-
+        //layerCheckGround = LayerMask.NameToLayer("Ground");
     }
     // Start is called before the first frame update
     void Start()
@@ -60,6 +64,23 @@ public class Role_deep : Role
     }
 
 
+
+
+
+    #endregion
+    #region unity方法
+    private void OnDrawGizmos()
+    {
+        //1.決定顏色
+        Gizmos.color = colorCheckGround;
+
+        //2.繪製圖示
+        //trans.position 當前物件座標
+        Gizmos.DrawCube(transform.position+v3CheckGroundOffset,v3CheckGroundSize);
+    }
+    #endregion
+
+    #region 自訂方法
 
 
     protected override void WalkKey()
@@ -120,9 +141,9 @@ public class Role_deep : Role
     }
 
 
-   
-     /*******測試*******/////
-     
+
+    /*******測試*******/////
+
     void Crouch()
     {/*
         if (Input.GetButton("Crouch"))
@@ -159,5 +180,4 @@ public class Role_deep : Role
         }
     }
     #endregion
-
 }
