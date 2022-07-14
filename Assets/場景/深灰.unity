@@ -258,10 +258,9 @@ GameObject:
   - component: {fileID: 523510561}
   - component: {fileID: 523510562}
   - component: {fileID: 523510563}
-  - component: {fileID: 523510565}
   - component: {fileID: 523510564}
   m_Layer: 0
-  m_Name: deep_0_0
+  m_Name: deep
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -327,7 +326,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 523510557}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 1.55, y: 12.25, z: 0}
+  m_LocalPosition: {x: 2.97, y: 6.26, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -403,14 +402,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 59a222893ac719e40a937ffeac8ab9b3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  speedWalk: 500
-  jumpForce: 250
-  v3CheckGroundSize: {x: 1, y: 1, z: 1}
-  v3CheckGroundOffset: {x: -0.75, y: 0, z: 0}
-  colorCheckGround: {r: 1, g: 0.25943398, b: 0.4075474, a: 0.5}
-  layerCheckGround:
+  speedWalk: 1500
+  jumpForce: 200
+  v3CheckGroundSize: {x: 3.61, y: 0.27, z: 0}
+  v3CheckGroundOffset: {x: 0.02, y: -1.7, z: 0}
+  colorCheckGround: {r: 1, g: 0, b: 0.2, a: 0.5}
+  layerGround:
     serializedVersion: 2
-    m_Bits: 8
+    m_Bits: 0
 --- !u!58 &523510564
 CircleCollider2D:
   m_ObjectHideFlags: 0
@@ -427,32 +426,6 @@ CircleCollider2D:
   m_Offset: {x: 1.41, y: -1.36}
   serializedVersion: 2
   m_Radius: 0.36
---- !u!61 &523510565
-BoxCollider2D:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 523510557}
-  m_Enabled: 1
-  m_Density: 1
-  m_Material: {fileID: 0}
-  m_IsTrigger: 1
-  m_UsedByEffector: 0
-  m_UsedByComposite: 0
-  m_Offset: {x: -0.52, y: -1.69}
-  m_SpriteTilingProperty:
-    border: {x: 0, y: 0, z: 0, w: 0}
-    pivot: {x: 0.5, y: 0.5}
-    oldSize: {x: 3.15, y: 3.65}
-    newSize: {x: 0.8, y: 0.7514286}
-    adaptiveTilingThreshold: 0.5
-    drawMode: 0
-    adaptiveTiling: 0
-  m_AutoTiling: 0
-  serializedVersion: 2
-  m_Size: {x: 1.84, y: 0.33}
-  m_EdgeRadius: 0
 --- !u!1 &610637222
 GameObject:
   m_ObjectHideFlags: 0
@@ -544,6 +517,14 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 198207266528165466, guid: 5b0f4b006d88a2f44acac227b36bf9d8, type: 3}
+      propertyPath: m_Name
+      value: "\u5730\u677F"
+      objectReference: {fileID: 0}
+    - target: {fileID: 198207266528165466, guid: 5b0f4b006d88a2f44acac227b36bf9d8, type: 3}
+      propertyPath: m_Layer
+      value: 3
+      objectReference: {fileID: 0}
     - target: {fileID: 1022100013486892633, guid: 5b0f4b006d88a2f44acac227b36bf9d8, type: 3}
       propertyPath: m_RootOrder
       value: 1
@@ -8960,7 +8941,7 @@ MonoBehaviour:
     ModeOverride: 0
     LensShift: {x: 0, y: 0}
     GateFit: 2
-    m_SensorSize: {x: 4.1036267, y: 1}
+    m_SensorSize: {x: 2.8310993, y: 1}
   m_Transitions:
     m_BlendHint: 0
     m_InheritPosition: 0
@@ -8977,7 +8958,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1313144322}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 1.55, y: 12.25, z: -10}
+  m_LocalPosition: {x: 2.97, y: 6.26, z: -10}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -9151,7 +9132,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2020124244}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 1.55, y: 12.25, z: -10}
+  m_LocalPosition: {x: 2.97, y: 6.26, z: -10}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []

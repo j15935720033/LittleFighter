@@ -25,7 +25,10 @@ public abstract class Role : MonoBehaviour
 
 
     #region 功能:實作該系統的複雜方法
-
+    abstract protected void WalkKey();
+    abstract protected void Walk();
+    abstract protected void JumpKey();
+    abstract protected void JumpForce();
     #endregion
 
 
@@ -45,10 +48,7 @@ public abstract class Role : MonoBehaviour
     {
 
     }
-    abstract protected void WalkKey();
-    abstract protected  void Walk();
-    abstract protected void JumpKey();
-    abstract protected void Jump();
+    
 
     #endregion
 
