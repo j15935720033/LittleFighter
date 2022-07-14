@@ -22,7 +22,7 @@ public class Role_deep : Role
 
     private Animator animator;
     private Rigidbody2D rig2D;
-    //private Transform trans;
+    private Transform trans;
     private Collider2D coll2D;
  
     private bool clickJump;
@@ -40,7 +40,7 @@ public class Role_deep : Role
 
         animator = GetComponent<Animator>();
         rig2D = GetComponent<Rigidbody2D>();
-        //trans = GetComponent<Transform>();
+        trans = GetComponent<Transform>();
 
         //layerCheckGround = LayerMask.NameToLayer("Ground");
     }
@@ -75,8 +75,9 @@ public class Role_deep : Role
         Gizmos.color = colorCheckGround;
 
         //2.繪製圖示
-        //trans.position 當前物件座標
-        Gizmos.DrawCube(transform.position+v3CheckGroundOffset,v3CheckGroundSize);
+        //trans.position 當前物件座標trans
+        //Gizmos.DrawCube(transform.position+v3CheckGroundOffset,v3CheckGroundSize);
+        Gizmos.DrawCube(trans.position + v3CheckGroundOffset, v3CheckGroundSize);
     }
     #endregion
 

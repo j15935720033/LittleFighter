@@ -327,7 +327,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 523510557}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -4.26, y: 4.61, z: 0}
+  m_LocalPosition: {x: 1.55, y: 12.25, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -406,8 +406,8 @@ MonoBehaviour:
   speedWalk: 500
   jumpForce: 250
   v3CheckGroundSize: {x: 1, y: 1, z: 1}
-  v3CheckGroundOffset: {x: -0.21, y: 0, z: 0}
-  colorCheckGround: {r: 1, g: 0, b: 0.2, a: 0.5}
+  v3CheckGroundOffset: {x: -0.75, y: 0, z: 0}
+  colorCheckGround: {r: 1, g: 0.25943398, b: 0.4075474, a: 0.5}
   layerCheckGround:
     serializedVersion: 2
     m_Bits: 8
@@ -8960,7 +8960,7 @@ MonoBehaviour:
     ModeOverride: 0
     LensShift: {x: 0, y: 0}
     GateFit: 2
-    m_SensorSize: {x: 2.9736843, y: 1}
+    m_SensorSize: {x: 4.1036267, y: 1}
   m_Transitions:
     m_BlendHint: 0
     m_InheritPosition: 0
@@ -8977,7 +8977,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1313144322}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -4.26, y: 4.61, z: -10}
+  m_LocalPosition: {x: 1.55, y: 12.25, z: -10}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -9151,7 +9151,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2020124244}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -4.26, y: 4.61, z: -10}
+  m_LocalPosition: {x: 1.55, y: 12.25, z: -10}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
