@@ -62,7 +62,7 @@ public class Role_deep : Role
         CheckGround();
         JumpKey();
         Walk();
-        UpdateAnimatorWalk();
+        //UpdateAnimatorWalk();
 
     }
     //一秒固定50次，物理移動放這裡
@@ -93,44 +93,52 @@ public class Role_deep : Role
     #region 自訂方法
 
 
-    protected override void WalkKey()
-    {
 
-    }
     protected override void Walk()
     {
 
-        #region Input.GetAxis 
+
+
+        float moveVertical = Input.GetAxisRaw("Vertical");//取得-1、0、1
+        rig2D.velocity = new Vector2(rig2D.velocity.x,moveVertical * speedWalk * Time.deltaTime);
+        
+        //****************水平*******************//
         //float moveDir = Input.GetAxis("Horizontal");//取得-1~1
         float moveDir = Input.GetAxisRaw("Horizontal");//取得-1、0、1
 
         // Time.deltaTime:Make it move 10 meters per second instead of 10 meters per frame...
-        //rig2D.AddForce(new Vector2(moveDir* speedWalk * Time.deltaTime,0));
         //****************人物加速度*******************//
+        //rig2D.AddForce(new Vector2(moveDir * speedWalk * Time.deltaTime, rig2D.velocity.y));
         rig2D.velocity = new Vector2(moveDir * speedWalk * Time.deltaTime, rig2D.velocity.y);
-        //trans.Translate(new Vector3(moveDir * speedWalk * Time.deltaTime,0,0));
+       
+        //****************判斷人物加速度*******************//
+        //print($"velocity={rig2D.velocity.x}");
+        if (rig2D.velocity.x!=0)
+        {
+            isWalk = true;
+            UpdateAnimatorWalk();
+        }else
+        {
+            isWalk = false;
+            UpdateAnimatorWalk();
+        }
+       
         //****************人物轉向*******************//
         if (moveDir > 0)
         {
-            isWalk = true;
             trans.localScale = new Vector2(1f, trans.localScale.y);//向左改变图像朝向左
         }
         else if (moveDir < 0)
         {
-            isWalk = true;
             trans.localScale = new Vector2(-1f, trans.localScale.y);//向左改变图像朝向左
-        }else if (moveDir==0)
-        {
-            isWalk = false;
         }
 
 
-        #endregion
-
     }
-    private void UpdateAnimatorWalk()
+
+    protected override void UpdateAnimatorWalk()//走路動畫
     {
-        animator.SetBool(nameWalk,isWalk);
+            animator.SetBool(nameWalk,isWalk);
     }
 
     protected override void JumpKey()//如果玩家按下空白鍵就往上跳躍
@@ -142,7 +150,7 @@ public class Role_deep : Role
             clickJump = true;
         }
     }
-    private void CheckGround()
+    private void CheckGround()//判斷是否在地板
     {
         //2D碰撞器=物理.覆蓋型區域(中心點,尺寸,角度,圖層)。transform.position+v3CheckGroundOffset:代表DrawCube位置
         Collider2D hit = Physics2D.OverlapBox(transform.position+v3CheckGroundOffset,v3CheckGroundSize,0, layerGround);
@@ -169,26 +177,7 @@ public class Role_deep : Role
     }
 
 
-    /*******測試*******/////
-
-    void Crouch()
-    {/*
-        if (Input.GetButton("Crouch"))
-        {
-            //animator.SetBool("Crouch", true);
-            //DisColl.enabled = false;
-        }else if (!Physics2D.OverlapCircle(CellingCheck,ImagePosition,0.2f,ground))
-        {
-            //animator.SetBool("Crouch", true);//設定動畫控制
-            //DisColl.enabled = true;
-        }*/
-    }
-    void IsOnGround()//是否在地面  放在fixedUpdate
-    {
-
-        //isGround = Physics2D.OverlapCircle(groundPoint.position,0.2f, ground);//腳下的點:groundPoint.position  檢測範圍:0.2f  檢測哪個是地面:ground
-
-    }
+    //**********測試********************//
     void TwoJump()
     {
         if (isGround)//在地面上
