@@ -9,7 +9,7 @@ public class Role_deep : Role
     [SerializeField,Header("走路速度")]
     private float speedWalk = 1500;
     [SerializeField,Header("跳躍力量")]
-    private float jumpForce = 200;
+    private float jumpForce = 500;
     [SerializeField, Header("檢查地板尺寸")]
     private Vector3 v3CheckGroundSize=new Vector3(3.61f, 0.27f,0);
     [SerializeField, Header("檢查地板位移")]
@@ -98,10 +98,12 @@ public class Role_deep : Role
     {
 
 
+       
 
-        float moveVertical = Input.GetAxisRaw("Vertical");//取得-1、0、1
-        rig2D.velocity = new Vector2(rig2D.velocity.x,moveVertical * speedWalk * Time.deltaTime);
-        
+        //****************垂直走*******************//
+        //float moveVertical = Input.GetAxisRaw("Vertical");//取得-1、0、1
+        //rig2D.velocity = new Vector2(rig2D.velocity.x,moveVertical * speedWalk * Time.deltaTime);
+
         //****************水平*******************//
         //float moveDir = Input.GetAxis("Horizontal");//取得-1~1
         float moveDir = Input.GetAxisRaw("Horizontal");//取得-1、0、1
@@ -109,8 +111,9 @@ public class Role_deep : Role
         // Time.deltaTime:Make it move 10 meters per second instead of 10 meters per frame...
         //****************人物加速度*******************//
         //rig2D.AddForce(new Vector2(moveDir * speedWalk * Time.deltaTime, rig2D.velocity.y));
-        rig2D.velocity = new Vector2(moveDir * speedWalk * Time.deltaTime, rig2D.velocity.y);
-       
+        //rig2D.velocity = new Vector2(moveDir * speedWalk * Time.deltaTime, rig2D.velocity.y);
+        //***************人物加速度上下左右*******************//
+        rig2D.velocity = new Vector2(Input.GetAxisRaw("Horizontal")* speedWalk * Time.deltaTime, Input.GetAxisRaw("Vertical")* jumpForcespeedWalk * Time.deltaTime);
         //****************判斷人物加速度*******************//
         //print($"velocity={rig2D.velocity.x}");
         if (rig2D.velocity.x!=0)
