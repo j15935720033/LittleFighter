@@ -28,8 +28,9 @@ public class Role_deep : Role
     private bool clickJump;
     private bool isGround;//是否在地面上,預設是false
     private bool isWalk;//是否走路,預設是false
-    private string nameWalk = "Walk";
-
+    private string parWalk = "Walk";
+    private float pressRightTime;//按下右鍵時間
+    private float releaseRightTime;//放開右鍵時間
     //測試
     private int twoJump;
     #endregion
@@ -61,15 +62,15 @@ public class Role_deep : Role
     {
         CheckGround();
         JumpKey();
-        Walk();
-        //UpdateAnimatorWalk();
+        //Walk();
+        Walk2();
 
     }
     //一秒固定50次，物理移動放這裡
     private void FixedUpdate()
     {
         JumpForce();
-        // Walk();
+        
     }
 
 
@@ -93,67 +94,89 @@ public class Role_deep : Role
     #region 自訂方法
 
 
-
+    /// <summary>
+    /// 用Input.GetAxisRaw
+    /// </summary>
     protected override void Walk()
     {
 
+        //****************水平*******************//
+        float moveH = Input.GetAxis("Horizontal");//取得-1~1
+        float moveHDir = Input.GetAxisRaw("Horizontal");//取得-1、0、1
 
-       
 
         //****************垂直走*******************//
-        //float moveVertical = Input.GetAxisRaw("Vertical");//取得-1、0、1
-        //rig2D.velocity = new Vector2(rig2D.velocity.x,moveVertical * speedWalk * Time.deltaTime);
+        float moveV = Input.GetAxis("Vertical");//取得-1、0、1
+        float moveVDir = Input.GetAxisRaw("Vertical");//取得-1、0、1
 
-        //****************水平*******************//
-        //float moveDir = Input.GetAxis("Horizontal");//取得-1~1
-        float moveDir = Input.GetAxisRaw("Horizontal");//取得-1、0、1
+       
 
         // Time.deltaTime:Make it move 10 meters per second instead of 10 meters per frame...
         //****************人物加速度*******************//
         //rig2D.AddForce(new Vector2(moveDir * speedWalk * Time.deltaTime, rig2D.velocity.y));
         //rig2D.velocity = new Vector2(moveDir * speedWalk * Time.deltaTime, rig2D.velocity.y);
         //***************人物加速度上下左右*******************//
-        rig2D.velocity = new Vector2(Input.GetAxisRaw("Horizontal")* speedWalk * Time.deltaTime, Input.GetAxisRaw("Vertical")* jumpForcespeedWalk * Time.deltaTime);
-        //****************判斷人物加速度*******************//
+        rig2D.velocity = new Vector2(moveH * speedWalk*Time.deltaTime, moveVDir * speedWalk*Time.deltaTime);
+        
+        //****************走路動畫*******************//
         //print($"velocity={rig2D.velocity.x}");
-        if (rig2D.velocity.x!=0)
+        if (Mathf.Abs(moveHDir)>0)
         {
-            isWalk = true;
-            UpdateAnimatorWalk();
+            animator.SetBool(parWalk,true);
         }else
         {
-            isWalk = false;
-            UpdateAnimatorWalk();
+            animator.SetBool(parWalk, false);
         }
        
         //****************人物轉向*******************//
-        if (moveDir > 0)
+        if (moveHDir > 0)
         {
-            trans.localScale = new Vector2(1f, trans.localScale.y);//向左改变图像朝向左
+            //trans.localScale = new Vector2(1f, trans.localScale.y);//向左改变图像朝向左
+            trans.rotation = new Quaternion(trans.rotation.x,0, trans.rotation.z, trans.rotation.w);
         }
-        else if (moveDir < 0)
+        else if (moveHDir < 0)
         {
-            trans.localScale = new Vector2(-1f, trans.localScale.y);//向左改变图像朝向左
+           //trans.localScale = new Vector2(-1f, trans.localScale.y);//向左改变图像朝向左
+            trans.rotation = new Quaternion(trans.rotation.x,180, trans.rotation.z, trans.rotation.w);
         }
-
-
     }
-
-    protected override void UpdateAnimatorWalk()//走路動畫
+    /// <summary>
+    /// 用Input.GetKey控制
+    /// </summary>
+    protected override void Walk2()
     {
-            animator.SetBool(nameWalk,isWalk);
-    }
-
-    protected override void JumpKey()//如果玩家按下空白鍵就往上跳躍
-    {
-
-        if (Input.GetKeyDown(KeyCode.RightShift))
+        //************************GetKey*************************************************//
+        if (Input.GetKey(KeyCode.RightArrow))
         {
-            print("跳躍");
-            clickJump = true;
+            pressRightTime = Time.time;
+            gameObject.transform.position += new Vector3(0.1f, 0, 0);
+            /*if (pressRightTime-releaseRightTime<=pressInterval)
+            {
+
+            }*/
         }
-    }
-    private void CheckGround()//判斷是否在地板
+        if (Input.GetKey(KeyCode.LeftArrow))
+        {
+            gameObject.transform.position += new Vector3(-0.1f, 0, 0);
+        }
+        if (Input.GetKey(KeyCode.UpArrow))
+        {
+            gameObject.transform.position += new Vector3(0, 0.1f, 0);
+        }
+        if (Input.GetKey(KeyCode.DownArrow))
+        {
+            gameObject.transform.position += new Vector3(0, -0.1f, 0);
+        }
+        //****************************************************************//
+        if (Input.GetKeyUp(KeyCode.RightArrow))
+        {
+            releaseRightTime = Time.time;
+        }
+     }
+
+
+
+        private void CheckGround()//判斷是否在地板
     {
         //2D碰撞器=物理.覆蓋型區域(中心點,尺寸,角度,圖層)。transform.position+v3CheckGroundOffset:代表DrawCube位置
         Collider2D hit = Physics2D.OverlapBox(transform.position+v3CheckGroundOffset,v3CheckGroundSize,0, layerGround);
@@ -168,6 +191,15 @@ public class Role_deep : Role
         else
         {
             isGround = false;
+        }
+    }
+    protected override void JumpKey()//如果玩家按下空白鍵就往上跳躍
+    {
+
+        if (Input.GetKeyDown(KeyCode.RightShift))
+        {
+            print("跳躍");
+            clickJump = true;
         }
     }
     protected override void JumpForce()//案跳躍&&在地板時給向上的力量
