@@ -166,6 +166,26 @@ Tilemap:
     e31: 0
     e32: 0
     e33: 1
+--- !u!95 &252024555
+Animator:
+  serializedVersion: 4
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 252024548}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: 2426ef9a4ebfe204ea7f8b023d758b22, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_StabilizeFeet: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorControllerStateOnDisable: 0
 --- !u!1 &255222552 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 198207266528165466, guid: 5b0f4b006d88a2f44acac227b36bf9d8, type: 3}
@@ -8941,7 +8961,7 @@ MonoBehaviour:
     ModeOverride: 0
     LensShift: {x: 0, y: 0}
     GateFit: 2
-    m_SensorSize: {x: 3.2294617, y: 1}
+    m_SensorSize: {x: 3.9514925, y: 1}
   m_Transitions:
     m_BlendHint: 0
     m_InheritPosition: 0
