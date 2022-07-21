@@ -6,10 +6,10 @@ public class Role_deep : Role
 {
     #region  屬性
 
-    [SerializeField, Header("走路速度"),Tooltip("用velocivy控制")]//用velocivy控制
+    [SerializeField, Header("走路速度"), Tooltip("用velocivy控制")]//用velocivy控制
     private float speedWalk = 1500;
     [SerializeField, Header("跳躍力量")]
-    private float jumpForce = 500;
+    private float jumpForce = 250;
     [SerializeField, Header("檢查地板尺寸")]
     private Vector3 v3CheckGroundSize = new Vector3(3.61f, 0.27f, 0);
     [SerializeField, Header("檢查地板位移")]
@@ -40,7 +40,10 @@ public class Role_deep : Role
     private float pressInterval = 0.1f;//2點個按鍵區間秒數
     private float pSpeedWalk = 0.01f;//用position走路
     private float pSpeedRun = 0.05f;//用position跑步路
-    private float pSpeedJump = 0.3f;
+    private float pSpeedJump = 1f;
+
+    private Vector3 temeV3;
+    private float y;
     //測試
     private int twoJump;
     #endregion
@@ -49,22 +52,21 @@ public class Role_deep : Role
     //喚醒事件:開始事件前執行一次，物件步開啟也會執行，取得元件等等
     private void Awake()
     {
-
-        animator = GetComponent<Animator>();
-        rig2D = GetComponent<Rigidbody2D>();
-
         deep = GameObject.Find("deep");
-        //trans = deep.GetComponent<Transform>();
-        trans = animator.GetComponent<Transform>();
+
+        animator = deep.GetComponent<Animator>();
+        rig2D = deep.GetComponent<Rigidbody2D>();
+        trans = deep.GetComponent<Transform>();
+
 
         //print(LayerMask.NameToLayer("Ground"));
         layerGround.value = LayerMask.GetMask("Ground");//設定LayerMask
-
+        //deep.layer=LayerMask.NameToLayer("Ground");//設定LayerMask
     }
     // Start is called before the first frame update
     void Start()
     {
-
+        temeV3 = transform.position;
     }
 
     //更新事件:每秒執行約60次，60FPS Frame per second
@@ -72,6 +74,7 @@ public class Role_deep : Role
     {
         CheckGround();
         JumpKey();
+        //Jump();
         //Walk();
         Walk2();
 
@@ -259,7 +262,7 @@ public class Role_deep : Role
             releaseDownTime = Time.time;
             //print($"releaseRightTime:{releaseRightTime}");
         }
-      
+
     }
 
 
@@ -278,23 +281,49 @@ public class Role_deep : Role
         }
         else
         {
+            //print($"不在地板hit是否有撞到東西={hit.name}");
             isGround = false;
         }
     }
-    protected override void JumpKey()//如果玩家按下空白鍵就往上跳躍
+    protected override void Jump()
+    {
+        if (Input.GetKeyDown(KeyCode.RightShift) && isGround )
+        {
+            print("跳躍");
+            print(gameObject.transform.position);
+            gameObject.transform.position += new Vector3(0, pSpeedJump, 0);
+            //rig2D.gravityScale = 1;
+        }
+    }
+    protected override void JumpKey()//如果玩家按下RightShift就往上跳躍
     {
 
         if (Input.GetKeyDown(KeyCode.RightShift))
         {
             print("跳躍");
             clickJump = true;
+            
         }
+
+        print(temeV3);
+        //print("transform" + transform.position);
+        if (transform.position.y <= y)
+        {
+            print("HI");
+            rig2D.gravityScale = 0;
+            rig2D.velocity = new Vector2(rig2D.velocity.x, 0);//因為有重力讓y軸有加速度用，會繼續掉落，所以y軸速度要用0
+        }
+
     }
     protected override void JumpForce()//案跳躍&&在地板時給向上的力量
     {
-        if (clickJump&&isGround)
+        if (clickJump)
         {
+            
+            y = transform.position.y;//記錄跳起的位置
+            //print(temeV3);
             rig2D.AddForce(new Vector2(0, jumpForce));
+            rig2D.gravityScale = 1;
             clickJump = false;
         }
     }

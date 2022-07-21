@@ -26,7 +26,8 @@ public abstract class Role : MonoBehaviour
 
     #region 功能:實作該系統的複雜方法
     abstract protected void Walk();
-    abstract protected void Walk2();
+    abstract protected void Walk2();//用position控制
+    abstract protected  void Jump();//用position控制
     abstract protected void JumpKey();
     abstract protected void JumpForce();//案跳躍&&在地板時給向上的力量
     #endregion
