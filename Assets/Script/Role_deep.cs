@@ -29,6 +29,10 @@ public class Role_deep : Role
     private bool isGround;//是否在地面上,預設是false
     private bool isWalk;//是否走路,預設是false
     private string parWalk = "Walk";
+    private string parRun = "Run";
+    private string parJump = "Jump";
+    private bool canJump=true ;//是否能做跳躍。動畫:[true:不做跳躍動畫,false:做跳躍動畫]
+
     private float pressRightTime;//按下右鍵時間
     private float releaseRightTime;//放開右鍵時間
     private float pressLeftTime;//按下左鍵時間
@@ -42,8 +46,7 @@ public class Role_deep : Role
     private float pSpeedRun = 0.05f;//用position跑步路
     private float pSpeedJump = 1f;
 
-    private Vector3 temeV3;
-    private float y;
+    private float originalY;//紀錄跳起時，原本y的位置
     //測試
     private int twoJump;
     #endregion
@@ -66,18 +69,19 @@ public class Role_deep : Role
     // Start is called before the first frame update
     void Start()
     {
-        temeV3 = transform.position;
+        
     }
 
     //更新事件:每秒執行約60次，60FPS Frame per second
     void Update()
     {
+        
         CheckGround();
         JumpKey();
         //Jump();
         //Walk();
         Walk2();
-
+        UpdateJumpAnimator();
     }
     //一秒固定50次，物理移動放這裡
     private void FixedUpdate()
@@ -85,11 +89,14 @@ public class Role_deep : Role
         JumpForce();
 
     }
-
-
-
-
-
+    private void OnGUI()//called several times per frame
+    {
+        if (Event.current.rawType == EventType.KeyDown)
+        {
+            EventCallBack(Event.current);
+            //Debug.Log(Event.current.keyCode);
+        }
+    }
     #endregion
     #region unity方法
     private void OnDrawGizmos()
@@ -170,6 +177,7 @@ public class Role_deep : Role
             {
                 print("<Color=yellow>跑步</Color>");
                 gameObject.transform.position += new Vector3(pSpeedRun, 0, 0);
+                animator.SetBool(parRun,true);//開啟跑步動畫
                 releaseRightTime = Time.time;//跑步狀態中要持續更新鬆鍵時間
             }
             else//走路
@@ -178,7 +186,7 @@ public class Role_deep : Role
                 gameObject.transform.position += new Vector3(pSpeedWalk, 0, 0);
                 animator.SetBool(parWalk, true);
             }
-            //轉向
+            //向右轉向
             gameObject.transform.rotation = new Quaternion(trans.rotation.x, 0, trans.rotation.z, trans.rotation.w);
         }
 
@@ -189,6 +197,7 @@ public class Role_deep : Role
             if (pressLeftTime - releaseLeftTime <= pressInterval)//跑步
             {
                 gameObject.transform.position += new Vector3(-pSpeedRun, 0, 0);
+                animator.SetBool(parRun, true);//開啟跑步動畫
                 releaseLeftTime = Time.time;
             }
             else//走路
@@ -196,6 +205,7 @@ public class Role_deep : Role
                 gameObject.transform.position += new Vector3(-pSpeedWalk, 0, 0);
                 animator.SetBool(parWalk, true);
             }
+            //向左轉向
             gameObject.transform.rotation = new Quaternion(trans.rotation.x, 180, trans.rotation.z, trans.rotation.w);
         }
 
@@ -240,13 +250,15 @@ public class Role_deep : Role
         //**************************GetKeyUp**************************************//
         if (Input.GetKeyUp(KeyCode.RightArrow))
         {
-            animator.SetBool(parWalk, false);
+            animator.SetBool(parWalk, false);//關閉走路動畫
+            animator.SetBool(parRun, false);//關閉跑步動畫
             releaseRightTime = Time.time;
             //print($"releaseRightTime:{releaseRightTime}");
         }
         if (Input.GetKeyUp(KeyCode.LeftArrow))
         {
             animator.SetBool(parWalk, false);
+            animator.SetBool(parRun, false);
             releaseLeftTime = Time.time;
             //print($"releaseRightTime:{releaseRightTime}");
         }
@@ -298,34 +310,72 @@ public class Role_deep : Role
     protected override void JumpKey()//如果玩家按下RightShift就往上跳躍
     {
 
-        if (Input.GetKeyDown(KeyCode.RightShift))
+        if (Input.GetKeyDown(KeyCode.RightShift)&& canJump)
         {
             print("跳躍");
             clickJump = true;
-            
         }
 
-        print(temeV3);
+        //print(temeV3);
         //print("transform" + transform.position);
-        if (transform.position.y <= y)
+        if (transform.position.y <= originalY)//落下時的位置，小於等於起跳點時，取消地心引力和y速度
         {
-            print("HI");
+            //print("HI");
             rig2D.gravityScale = 0;
-            rig2D.velocity = new Vector2(rig2D.velocity.x, 0);//因為有重力讓y軸有加速度用，會繼續掉落，所以y軸速度要用0
+            rig2D.velocity = new Vector2(0, 0);//碰到撞時也會有反向作用力的速度，因為有重力讓y軸有加速度用，會繼續掉落，所以y軸速度要用0
+            canJump = true;
         }
 
     }
     protected override void JumpForce()//案跳躍&&在地板時給向上的力量
     {
-        if (clickJump)
+        if (clickJump&& canJump)//有按rightShift && 能跳
         {
             
-            y = transform.position.y;//記錄跳起的位置
+            originalY = transform.position.y;//記錄跳起的位置
             //print(temeV3);
             rig2D.AddForce(new Vector2(0, jumpForce));
-            rig2D.gravityScale = 1;
+            rig2D.gravityScale = 1;//跳起後地心引力設1
             clickJump = false;
+            canJump = false;
         }
+    }
+    private void UpdateJumpAnimator()
+    {
+        animator.SetBool(parJump, canJump);
+    }
+    
+    
+    //***********unity 组合键******************//
+    private void EventCallBack(Event e)
+    {
+        //print(e.modifiers & EventModifiers.Control);//Control
+        bool eventDown = (e.modifiers & EventModifiers.Control) != 0;
+
+        if (!eventDown) return;
+
+        e.Use();        //使用这个事件
+       
+        switch (e.keyCode)
+        {
+            case KeyCode.UpArrow:
+                Debug.Log("按下组合键:ctrl+↑");
+                break;
+            case KeyCode.DownArrow:
+                Debug.Log("按下组合键:ctrl+↓");
+                break;
+            case KeyCode.LeftArrow:
+                Debug.Log("按下组合键:ctrl+←");
+                break;
+            case KeyCode.RightArrow:
+                Debug.Log("按下组合键:ctrl+→");
+                break;
+        }
+    }
+
+    private void skill()
+    {
+
     }
 
 
