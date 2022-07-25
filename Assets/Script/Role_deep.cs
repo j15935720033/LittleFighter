@@ -35,18 +35,36 @@ public class Role_deep : Role
 
     private float pressRightTime;//按下右鍵時間
     private float releaseRightTime;//放開右鍵時間
-    private float pressLeftTime;//按下左鍵時間
-    private float releaseLeftTime;//放開左鍵時間
-    private float pressUpTime;
+    private float pressLeftTime;//左鍵
+    private float releaseLeftTime;
+    private float pressUpTime;//上鍵
     private float releaseUpTime;
-    private float pressDownTime;
+    private float pressDownTime;//下鍵
     private float releaseDownTime;
-    private float pressInterval = 0.1f;//2點個按鍵區間秒數
+    private float pressRightControlTime;//control
+    private float releaseRightControlTime;
+    private float pressRightShifTime;//shift
+    private float releaseShiftTime;
+    private float pressEnterTime;//enter
+    private float releaseEnterTime;
+
+    private float pressInterval = 0.1f;//區間秒數0.1
+    private float pressInterval3 = 0.3f;//區間秒數0.3
+    private float pressInterval5 = 0.5f;//區間秒數0.2
     private float pSpeedWalk = 0.01f;//用position走路
     private float pSpeedRun = 0.05f;//用position跑步路
     private float pSpeedJump = 1f;
 
     private float originalY;//紀錄跳起時，原本y的位置
+
+    //自定義方向鍵的儲存值    
+    public const int KEY_UP = 0;
+    public const int KEY_DOWN = 1;
+    public const int KEY_LEFT = 2;
+    public const int KEY_RIGHT = 3;
+    
+
+
     //測試
     private int twoJump;
     #endregion
@@ -82,6 +100,7 @@ public class Role_deep : Role
         //Walk();
         Walk2();
         UpdateJumpAnimator();
+        skill();
     }
     //一秒固定50次，物理移動放這裡
     private void FixedUpdate()
@@ -93,7 +112,7 @@ public class Role_deep : Role
     {
         if (Event.current.rawType == EventType.KeyDown)
         {
-            EventCallBack(Event.current);
+            //EventCallBack(Event.current);
             //Debug.Log(Event.current.keyCode);
         }
     }
@@ -175,33 +194,42 @@ public class Role_deep : Role
             //print($"pressRightTime:{pressRightTime}");
             if (pressRightTime - releaseRightTime <= pressInterval)//跑步
             {
-                print("<Color=yellow>跑步</Color>");
-                gameObject.transform.position += new Vector3(pSpeedRun, 0, 0);
+                print("<Color=yellow>右跑</Color>");
                 animator.SetBool(parRun,true);//開啟跑步動畫
+                gameObject.transform.position += new Vector3(pSpeedRun, 0, 0);
                 releaseRightTime = Time.time;//跑步狀態中要持續更新鬆鍵時間
             }
             else//走路
             {
-                //print("<Color=yellow>走路</Color>");
+                print("<Color=red>走路</Color>");
                 gameObject.transform.position += new Vector3(pSpeedWalk, 0, 0);
                 animator.SetBool(parWalk, true);
             }
             //向右轉向
             gameObject.transform.rotation = new Quaternion(trans.rotation.x, 0, trans.rotation.z, trans.rotation.w);
         }
+        if (Input.GetKeyUp(KeyCode.RightArrow))
+        {
 
+            animator.SetBool(parWalk, false);//關閉走路動畫
+            animator.SetBool(parRun, false);//關閉跑步動畫
+            releaseRightTime = Time.time;
+            //print($"releaseRightTime:{releaseRightTime}");
+        }
         //按左鍵
         if (Input.GetKey(KeyCode.LeftArrow))
         {
             pressLeftTime = Time.time;
             if (pressLeftTime - releaseLeftTime <= pressInterval)//跑步
             {
+                print("<Color=yellow>左跑</Color>");
                 gameObject.transform.position += new Vector3(-pSpeedRun, 0, 0);
                 animator.SetBool(parRun, true);//開啟跑步動畫
                 releaseLeftTime = Time.time;
             }
             else//走路
             {
+                print("<Color=red>走路</Color>");
                 gameObject.transform.position += new Vector3(-pSpeedWalk, 0, 0);
                 animator.SetBool(parWalk, true);
             }
@@ -247,14 +275,9 @@ public class Role_deep : Role
             releaseDownTime = Time.time;
             //print($"releaseRightTime:{releaseRightTime}");
         }*/
+
         //**************************GetKeyUp**************************************//
-        if (Input.GetKeyUp(KeyCode.RightArrow))
-        {
-            animator.SetBool(parWalk, false);//關閉走路動畫
-            animator.SetBool(parRun, false);//關閉跑步動畫
-            releaseRightTime = Time.time;
-            //print($"releaseRightTime:{releaseRightTime}");
-        }
+       
         if (Input.GetKeyUp(KeyCode.LeftArrow))
         {
             animator.SetBool(parWalk, false);
@@ -375,8 +398,55 @@ public class Role_deep : Role
 
     private void skill()
     {
+        //RightControl
+        if (Input.GetKeyDown(KeyCode.RightControl))
+        {
+            pressRightControlTime = Time.time;
+        }
+        if (Input.GetKeyUp(KeyCode.RightControl))
+        {
+            releaseRightControlTime = Time.time;
+        }
+        //Enter
+        if (Input.GetKeyDown(KeyCode.Return))
+        {
+            pressEnterTime = Time.time;
+            print($"Enter:{pressEnterTime} right:{pressRightTime}  control:{pressRightControlTime}");
+            //ctrl→Enter
+            if (pressRightTime-pressRightControlTime< pressInterval3 && pressEnterTime-pressRightControlTime< pressInterval5)
+            {
+                Debug.Log("ctrl→Enter");
+            }
 
+        }
+        if (Input.GetKeyUp(KeyCode.Return))
+        {
+            releaseEnterTime = Time.time;
+        }
+
+        //UpArrow
+        if (Input.GetKeyDown(KeyCode.UpArrow))
+        {
+            pressUpTime = Time.time;
+        }
+        if (Input.GetKeyUp(KeyCode.UpArrow))
+        {
+            releaseUpTime = Time.time;
+        }
+        //RightArrow
+        if (Input.GetKeyDown(KeyCode.RightArrow))
+        {
+            pressRightTime = Time.time;
+        }
+        if (Input.GetKeyUp(KeyCode.RightArrow))
+        {
+            releaseRightTime = Time.time;
+        }
+        //↑ ↓ → ←
     }
+
+
+
 
 
     //**********測試********************//
