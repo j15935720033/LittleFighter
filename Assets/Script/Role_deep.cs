@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System;
 using UnityEngine;
 
 public class Role_deep : Role
@@ -14,15 +15,19 @@ public class Role_deep : Role
     private Vector3 v3CheckGroundSize = new Vector3(3.61f, 0.27f, 0);
     [SerializeField, Header("檢查地板位移")]
     private Vector3 v3CheckGroundOffset = new Vector3(0.02f, -1.7f, 0);
+    [SerializeField, Header("檢查Shadow位移")]
+    private Vector3 v3CheckGroundOffsetShadow = new Vector3(-0.19f, -1.91f, 0);
     [SerializeField, Header("檢查地板顏色")]
     private Color colorCheckGround = new Color(1, 0, 0.2f, 0.5f);
     [SerializeField, Header("檢查地板圖層")]
     private LayerMask layerGround;
-
+    [SerializeField, Header("影子")]
+    private GameObject shadow;
 
     private Animator animator;
     private Rigidbody2D rig2D;
     private Transform trans;
+    private Transform transShadow;
     private Collider2D coll2D;
     private GameObject deep;
     private bool clickJump;
@@ -31,8 +36,8 @@ public class Role_deep : Role
     private string parWalk = "Walk";
     private string parRun = "Run";
     private string parJump = "Jump";
-    private bool canJump=true ;//是否能做跳躍。動畫:[true:不做跳躍動畫,false:做跳躍動畫]
-
+    private bool canJump = true;//是否能做跳躍。動畫:[true:不做跳躍動畫,false:做跳躍動畫]
+    private bool moveShadow = true;//移動影子
     private float pressRightTime;//按下右鍵時間
     private float releaseRightTime;//放開右鍵時間
     private float pressLeftTime;//左鍵
@@ -56,13 +61,9 @@ public class Role_deep : Role
     private float pSpeedJump = 1f;
 
     private float originalY;//紀錄跳起時，原本y的位置
+    System.Random random;
 
-    //自定義方向鍵的儲存值    
-    public const int KEY_UP = 0;
-    public const int KEY_DOWN = 1;
-    public const int KEY_LEFT = 2;
-    public const int KEY_RIGHT = 3;
-    
+
 
 
     //測試
@@ -78,8 +79,7 @@ public class Role_deep : Role
         animator = deep.GetComponent<Animator>();
         rig2D = deep.GetComponent<Rigidbody2D>();
         trans = deep.GetComponent<Transform>();
-
-
+        transShadow = shadow.GetComponent<Transform>();
         //print(LayerMask.NameToLayer("Ground"));
         layerGround.value = LayerMask.GetMask("Ground");//設定LayerMask
         //deep.layer=LayerMask.NameToLayer("Ground");//設定LayerMask
@@ -87,20 +87,21 @@ public class Role_deep : Role
     // Start is called before the first frame update
     void Start()
     {
-        
+        random = new System.Random();
     }
 
     //更新事件:每秒執行約60次，60FPS Frame per second
     void Update()
     {
-        
-        CheckGround();
+        ShadowOffset();
+        //CheckGround();
         JumpKey();
         //Jump();
         //Walk();
         Walk2();
         UpdateJumpAnimator();
         skill();
+        Attack();
     }
     //一秒固定50次，物理移動放這裡
     private void FixedUpdate()
@@ -181,7 +182,7 @@ public class Role_deep : Role
         }
     }
     /// <summary>
-    /// 用Input.GetKey控制
+    /// 用Input.GetKey控制上下左右
     /// </summary>
     protected override void Walk2()
     {
@@ -195,7 +196,7 @@ public class Role_deep : Role
             if (pressRightTime - releaseRightTime <= pressInterval)//跑步
             {
                 print("<Color=yellow>右跑</Color>");
-                animator.SetBool(parRun,true);//開啟跑步動畫
+                animator.SetBool(parRun, true);//開啟跑步動畫
                 gameObject.transform.position += new Vector3(pSpeedRun, 0, 0);
                 releaseRightTime = Time.time;//跑步狀態中要持續更新鬆鍵時間
             }
@@ -277,7 +278,7 @@ public class Role_deep : Role
         }*/
 
         //**************************GetKeyUp**************************************//
-       
+
         if (Input.GetKeyUp(KeyCode.LeftArrow))
         {
             animator.SetBool(parWalk, false);
@@ -301,8 +302,10 @@ public class Role_deep : Role
     }
 
 
-
-    private void CheckGround()//判斷是否在地板
+    /// <summary>
+    /// 判斷是否在地板
+    /// </summary>
+    private void CheckGround()
     {
         //2D碰撞器=物理.覆蓋型區域(中心點,尺寸,角度,圖層)。transform.position+v3CheckGroundOffset:代表DrawCube位置
         Collider2D hit = Physics2D.OverlapBox(transform.position + v3CheckGroundOffset, v3CheckGroundSize, 0, layerGround);
@@ -322,18 +325,21 @@ public class Role_deep : Role
     }
     protected override void Jump()
     {
-        if (Input.GetKeyDown(KeyCode.RightShift) && isGround )
+        if (Input.GetKeyDown(KeyCode.RightShift) && isGround)
         {
             print("跳躍");
-            print(gameObject.transform.position);
+            //print(gameObject.transform.position);
             gameObject.transform.position += new Vector3(0, pSpeedJump, 0);
             //rig2D.gravityScale = 1;
         }
     }
-    protected override void JumpKey()//如果玩家按下RightShift就往上跳躍
+    /// <summary>
+    ///紀錄玩家是否按RightShift(跳躍)，並且落下時把地心引力、y速度都歸0
+    /// </summary>
+    protected override void JumpKey()
     {
 
-        if (Input.GetKeyDown(KeyCode.RightShift)&& canJump)
+        if (Input.GetKeyDown(KeyCode.RightShift) && canJump)
         {
             print("跳躍");
             clickJump = true;
@@ -347,14 +353,18 @@ public class Role_deep : Role
             rig2D.gravityScale = 0;
             rig2D.velocity = new Vector2(0, 0);//碰到撞時也會有反向作用力的速度，因為有重力讓y軸有加速度用，會繼續掉落，所以y軸速度要用0
             canJump = true;
+            moveShadow = true;
         }
 
     }
+    /// <summary>
+    /// 有按下RightShift(跳躍鍵)，給向上推力，並把地心引力設為1
+    /// </summary>
     protected override void JumpForce()//案跳躍&&在地板時給向上的力量
     {
-        if (clickJump&& canJump)//有按rightShift && 能跳
+        if (clickJump && canJump)//有按rightShift && 能跳
         {
-            
+            moveShadow = false;//影子不要位移
             originalY = transform.position.y;//記錄跳起的位置
             //print(temeV3);
             rig2D.AddForce(new Vector2(0, jumpForce));
@@ -363,39 +373,51 @@ public class Role_deep : Role
             canJump = false;
         }
     }
+    /// <summary>
+    /// 更新跳躍動畫
+    /// </summary>
     private void UpdateJumpAnimator()
     {
         animator.SetBool(parJump, canJump);
     }
-    
-    
-    //***********unity 组合键******************//
-    private void EventCallBack(Event e)
+    /// <summary>
+    /// 控制circle(影子)，跟著人物移動
+    /// </summary>
+    private void ShadowOffset()
     {
-        //print(e.modifiers & EventModifiers.Control);//Control
-        bool eventDown = (e.modifiers & EventModifiers.Control) != 0;
-
-        if (!eventDown) return;
-
-        e.Use();        //使用这个事件
-       
-        switch (e.keyCode)
+        if (moveShadow)
         {
-            case KeyCode.UpArrow:
-                Debug.Log("按下组合键:ctrl+↑");
-                break;
-            case KeyCode.DownArrow:
-                Debug.Log("按下组合键:ctrl+↓");
-                break;
-            case KeyCode.LeftArrow:
-                Debug.Log("按下组合键:ctrl+←");
-                break;
-            case KeyCode.RightArrow:
-                Debug.Log("按下组合键:ctrl+→");
-                break;
+            transShadow.position = transform.position + v3CheckGroundOffsetShadow;
+        }
+        else//跳起來影子y軸不要動
+        {
+            transShadow.position = new Vector2(transform.position.x + v3CheckGroundOffsetShadow.x, originalY + v3CheckGroundOffsetShadow.y);
+        }
+
+    }
+    /// <summary>
+    /// 攻擊
+    /// </summary>
+    private void Attack()
+    {
+        if (Input.GetKeyDown(KeyCode.Return))
+        {
+            //print(random.Next(2));//0、1
+            print(random.Next(1,3));//1、2
+            int temp = random.Next(1, 2);
+            if (temp == 1)
+            {
+                animator.SetTrigger("Attack1");
+            }
+            else
+            {
+                animator.SetTrigger("Attack2");
+            }
+
+
+
         }
     }
-
     private void skill()
     {
         //RightControl
@@ -411,9 +433,9 @@ public class Role_deep : Role
         if (Input.GetKeyDown(KeyCode.Return))
         {
             pressEnterTime = Time.time;
-            print($"Enter:{pressEnterTime} right:{pressRightTime}  control:{pressRightControlTime}");
+            //print($"Enter:{pressEnterTime} right:{pressRightTime}  control:{pressRightControlTime}");
             //ctrl→Enter
-            if (pressRightTime-pressRightControlTime< pressInterval3 && pressEnterTime-pressRightControlTime< pressInterval5)
+            if (pressRightTime - pressRightControlTime < pressInterval3 && pressEnterTime - pressRightControlTime < pressInterval5)
             {
                 Debug.Log("ctrl→Enter");
             }
@@ -447,6 +469,32 @@ public class Role_deep : Role
 
 
 
+    //***********unity 组合键******************//
+    private void EventCallBack(Event e)
+    {
+        //print(e.modifiers & EventModifiers.Control);//Control
+        bool eventDown = (e.modifiers & EventModifiers.Control) != 0;
+
+        if (!eventDown) return;
+
+        e.Use();        //使用这个事件
+
+        switch (e.keyCode)
+        {
+            case KeyCode.UpArrow:
+                Debug.Log("按下组合键:ctrl+↑");
+                break;
+            case KeyCode.DownArrow:
+                Debug.Log("按下组合键:ctrl+↓");
+                break;
+            case KeyCode.LeftArrow:
+                Debug.Log("按下组合键:ctrl+←");
+                break;
+            case KeyCode.RightArrow:
+                Debug.Log("按下组合键:ctrl+→");
+                break;
+        }
+    }
 
 
     //**********測試********************//

@@ -169,7 +169,7 @@ MonoBehaviour:
     ModeOverride: 0
     LensShift: {x: 0, y: 0}
     GateFit: 2
-    m_SensorSize: {x: 4.3772893, y: 1}
+    m_SensorSize: {x: 3.9373133, y: 1}
   m_Transitions:
     m_BlendHint: 0
     m_InheritPosition: 0
@@ -417,7 +417,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 523510557}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -10.08, y: 4.3, z: -0.21}
+  m_LocalPosition: {x: -3.41, y: 5.13, z: -0.21}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -495,12 +495,14 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   speedWalk: 1500
   jumpForce: 250
-  v3CheckGroundSize: {x: 3.61, y: 0.27, z: 0}
+  v3CheckGroundSize: {x: 3.53, y: 0.27, z: 0}
   v3CheckGroundOffset: {x: 0.02, y: -1.7, z: 0}
+  v3CheckGroundOffsetShadow: {x: -0.19, y: -1.91, z: 0}
   colorCheckGround: {r: 1, g: 0, b: 0.2, a: 0.5}
   layerGround:
     serializedVersion: 2
     m_Bits: 0
+  shadow: {fileID: 1595300192}
 --- !u!58 &523510564
 CircleCollider2D:
   m_ObjectHideFlags: 0
@@ -9152,8 +9154,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1162649374}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 14.69, y: 3.71, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalPosition: {x: 14.9894, y: 3.3657, z: 0}
+  m_LocalScale: {x: 0.8004, y: 0.7402, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
@@ -9252,8 +9254,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1595300192}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -10.643, y: 2.4890003, z: 0}
-  m_LocalScale: {x: 2.3521018, y: 0.3613, z: 1}
+  m_LocalPosition: {x: -4, y: 3.16, z: 0}
+  m_LocalScale: {x: 3.7984376, y: 0.36914197, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
