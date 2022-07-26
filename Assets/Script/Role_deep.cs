@@ -59,10 +59,10 @@ public class Role_deep : Role
     private float pSpeedWalk = 0.01f;//用position走路
     private float pSpeedRun = 0.05f;//用position跑步路
     private float pSpeedJump = 1f;
-
+   
     private float originalY;//紀錄跳起時，原本y的位置
     System.Random random;
-
+    private int i01;//random產生
 
 
 
@@ -403,19 +403,33 @@ public class Role_deep : Role
         if (Input.GetKeyDown(KeyCode.Return))
         {
             //print(random.Next(2));//0、1
-            print(random.Next(1,3));//1、2
-            int temp = random.Next(1, 2);
-            if (temp == 1)
+            //print(random.Next(1,3));//1、2
+            i01 = random.Next(1,3);
+            print(i01);
+            if (i01 == 1){
+                //Debug.Log("Attack1"+temp);
+                animator.SetTrigger("TriggerAttack1");
+            }
+            else{
+                //Debug.Log("Attack2"+temp);
+                animator.SetTrigger("TriggerAttack2");
+            }
+        }
+        if (Input.GetKeyUp(KeyCode.Return))
+        {
+            //print(random.Next(2));//0、1
+            //print(random.Next(1,3));//1、2
+            print(i01);
+            if (i01 == 1)
             {
-                animator.SetTrigger("Attack1");
+                //Debug.Log("Attack1"+temp);
+                //animator.SetBool("Attack1", false);
             }
             else
             {
-                animator.SetTrigger("Attack2");
+                //Debug.Log("Attack2"+temp);
+                //animator.SetBool("Attack2", false);
             }
-
-
-
         }
     }
     private void skill()
@@ -439,7 +453,12 @@ public class Role_deep : Role
             {
                 Debug.Log("ctrl→Enter");
             }
-
+            //ctrl↓Enter   要跟攻擊判斷寫一起
+            if (pressDownTime - pressRightControlTime < pressInterval3 && pressEnterTime - pressRightControlTime < pressInterval5)
+            {
+              
+                Debug.Log("ctrl↓Enter");
+            }
         }
         if (Input.GetKeyUp(KeyCode.Return))
         {
