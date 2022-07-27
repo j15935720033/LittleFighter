@@ -100,7 +100,7 @@ public class Role_deep : Role
         //Walk();
         Walk2();
         UpdateJumpAnimator();
-        skill();
+        //skill();
         Attack();
     }
     //一秒固定50次，物理移動放這裡
@@ -187,8 +187,7 @@ public class Role_deep : Role
     protected override void Walk2()
     {
         //************************GetKey*************************************************//
-
-        //按右鍵
+        //右鍵
         if (Input.GetKey(KeyCode.RightArrow))
         {
             pressRightTime = Time.time;
@@ -217,7 +216,7 @@ public class Role_deep : Role
             releaseRightTime = Time.time;
             //print($"releaseRightTime:{releaseRightTime}");
         }
-        //按左鍵
+        //左鍵
         if (Input.GetKey(KeyCode.LeftArrow))
         {
             pressLeftTime = Time.time;
@@ -237,8 +236,15 @@ public class Role_deep : Role
             //向左轉向
             gameObject.transform.rotation = new Quaternion(trans.rotation.x, 180, trans.rotation.z, trans.rotation.w);
         }
+        if (Input.GetKeyUp(KeyCode.LeftArrow))
+        {
+            animator.SetBool(parWalk, false);
+            animator.SetBool(parRun, false);
+            releaseLeftTime = Time.time;
+            //print($"releaseRightTime:{releaseRightTime}");
+        }
 
-        //按上鍵
+        //上鍵
         if (Input.GetKey(KeyCode.UpArrow))
         {
             pressUpTime = Time.time;
@@ -253,8 +259,13 @@ public class Role_deep : Role
                 animator.SetBool(parWalk, true);
             }
         }
-
-        //按下鍵
+        if (Input.GetKeyUp(KeyCode.UpArrow))
+        {
+            animator.SetBool(parWalk, false);
+            releaseUpTime = Time.time;
+            //print($"releaseRightTime:{releaseRightTime}");
+        }
+        //下鍵
         if (Input.GetKey(KeyCode.DownArrow))
         {
             pressDownTime = Time.time;
@@ -269,35 +280,16 @@ public class Role_deep : Role
                 animator.SetBool(parWalk, true);
             }
         }
-        //**************************GetKeyDown**************************************//
-        /*if (Input.GetKeyDown(KeyCode.RightShift))
-        {
-            gameObject.transform.position += new Vector3(0, pSpeedJump, 0);
-            releaseDownTime = Time.time;
-            //print($"releaseRightTime:{releaseRightTime}");
-        }*/
 
-        //**************************GetKeyUp**************************************//
-
-        if (Input.GetKeyUp(KeyCode.LeftArrow))
-        {
-            animator.SetBool(parWalk, false);
-            animator.SetBool(parRun, false);
-            releaseLeftTime = Time.time;
-            //print($"releaseRightTime:{releaseRightTime}");
-        }
-        if (Input.GetKeyUp(KeyCode.UpArrow))
-        {
-            animator.SetBool(parWalk, false);
-            releaseUpTime = Time.time;
-            //print($"releaseRightTime:{releaseRightTime}");
-        }
         if (Input.GetKeyUp(KeyCode.DownArrow))
         {
             animator.SetBool(parWalk, false);
             releaseDownTime = Time.time;
             //print($"releaseRightTime:{releaseRightTime}");
         }
+
+
+ 
 
     }
 
@@ -400,26 +392,48 @@ public class Role_deep : Role
     /// </summary>
     private void Attack()
     {
+        //*********************Enter******************************//
         if (Input.GetKeyDown(KeyCode.Return))
-        {
-            //print(random.Next(2));//0、1
-            //print(random.Next(1,3));//1、2
-            i01 = random.Next(1,3);
-            print(i01);
-            if (i01 == 1){
-                //Debug.Log("Attack1"+temp);
-                animator.SetTrigger("TriggerAttack1");
+        {   
+            pressEnterTime = Time.time;
+            //ctrl↓Enter
+            print($"pressRightControlTime:{pressRightControlTime}");
+            print($"pressDownTime:{pressDownTime}");
+            print($"pressEnterTime:{pressEnterTime}");
+            if (pressDownTime - pressRightControlTime < pressInterval3 && pressEnterTime - pressRightControlTime < pressInterval5)
+            {
+                Debug.Log("ctrl↓Enter");
             }
-            else{
-                //Debug.Log("Attack2"+temp);
-                animator.SetTrigger("TriggerAttack2");
+            //ctrl→Enter
+            else if (pressRightTime - pressRightControlTime < pressInterval3 && pressEnterTime - pressRightControlTime < pressInterval5)
+            {
+                Debug.Log("ctrl→Enter");
+            }
+            //Enter(攻擊)
+            else
+            {
+                //print(random.Next(2));//0、1
+                //print(random.Next(1,3));//1、2
+                i01 = random.Next(1, 3);
+                //print(i01);
+                if (i01 == 1)
+                {
+                    //Debug.Log("Attack1"+temp);
+                    animator.SetTrigger("TriggerAttack1");
+                }
+                else
+                {
+                    //Debug.Log("Attack2"+temp);
+                    animator.SetTrigger("TriggerAttack2");
+                }
             }
         }
+        //鬆Enter
         if (Input.GetKeyUp(KeyCode.Return))
         {
             //print(random.Next(2));//0、1
             //print(random.Next(1,3));//1、2
-            print(i01);
+            //print(i01);
             if (i01 == 1)
             {
                 //Debug.Log("Attack1"+temp);
@@ -430,6 +444,16 @@ public class Role_deep : Role
                 //Debug.Log("Attack2"+temp);
                 //animator.SetBool("Attack2", false);
             }
+        }
+        //*********************RightControlTime******************************//
+        if (Input.GetKeyDown(KeyCode.RightControl))
+        {
+            pressRightControlTime = Time.time;
+        }
+        //*********************RightShiftTime******************************//
+        if (Input.GetKeyDown(KeyCode.RightShift))
+        {
+            pressRightShifTime = Time.time;
         }
     }
     private void skill()
