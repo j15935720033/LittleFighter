@@ -40,6 +40,7 @@ public class Role_deep : Role
     private string parJump = "Jump";
     private String parDefense = "Defense";
     private String parTriggerRoll = "TriggerRoll";
+    private String parRoll = "Roll";
     private bool canJump = true;//是否能做跳躍。動畫:[true:不做跳躍動畫,false:做跳躍動畫]
     private bool moveShadow = true;//移動影子
     private bool canmove = true;//是否能移動
@@ -225,7 +226,7 @@ public class Role_deep : Role
         if (Input.GetKeyUp(KeyCode.RightArrow) && canmove)
         {
             pressRight = false;//是否右按下右鍵
-            stateRun = false;//不跑步狀態
+            stateRun = false;//關掉跑步狀態
             animator.SetBool(parWalk, false);//關閉走路動畫
             animator.SetBool(parRun, false);//關閉跑步動畫
             releaseRightTime = Time.time;
@@ -239,8 +240,9 @@ public class Role_deep : Role
             if (pressLeftTime - releaseLeftTime <= pressInterval && canmove)//跑步
             {
                 print("<Color=yellow>左跑</Color>");
-                gameObject.transform.position += new Vector3(-pSpeedRun, 0, 0);
+                stateRun = true;//跑步狀態
                 animator.SetBool(parRun, true);//開啟跑步動畫
+                gameObject.transform.position += new Vector3(-pSpeedRun, 0, 0);
                 releaseLeftTime = Time.time;
             }
             else if(canmove)//走路
@@ -255,6 +257,7 @@ public class Role_deep : Role
         if (Input.GetKeyUp(KeyCode.LeftArrow))
         {
             pressLeft = false;//是否右按下左鍵
+            stateRun = false;//關掉跑步狀態
             animator.SetBool(parWalk, false);
             animator.SetBool(parRun, false);
             releaseLeftTime = Time.time;
@@ -468,24 +471,29 @@ public class Role_deep : Role
             pressRightControlTime = Time.time;
             if (stateRun && pressRight)//跑步時向右翻滾
             {
-
-                animator.SetTrigger(parTriggerRoll);
+                print("右翻滾");
+                animator.SetBool(parRoll,true);
                 canmove = false;//不能移動
                 rig2D.velocity = new Vector2(speedRoll * Time.deltaTime, rig2D.velocity.y);
+                StartCoroutine(waitRoll());//等待幾秒
                 
-            }else if (stateRun && pressLeft)//跑步時向左翻滾
+            }
+            else if (stateRun && pressLeft)//跑步時向左翻滾
             {
-                animator.SetTrigger(parTriggerRoll);
+                print("左翻滾");
+                animator.SetBool(parRoll, true);
                 canmove = false;//不能移動
                 rig2D.velocity = new Vector2(-speedRoll * Time.deltaTime, rig2D.velocity.y);
+                StartCoroutine(waitRoll());//等待幾秒
             }
             else//走路按防禦
             {
                 canmove = false;//不能移動
                 animator.SetBool(parDefense, true);//開啟防禦動畫
+                StartCoroutine(waitDefense());//等待幾秒
             }
-            animator.SetBool(parRun, false);////關閉跑步動畫
-            StartCoroutine(waitControl());//等待幾秒
+            
+           
 
 
         }
@@ -503,19 +511,22 @@ public class Role_deep : Role
         }
     }
     //防禦自動解除
-    IEnumerator waitControl()
+    IEnumerator waitDefense()
     {
         yield return new WaitForSeconds(0.5f);//等待幾秒
-        rig2D.velocity = new Vector2(0, 0);
-        pressRight = false;
-        pressLeft = false;
         animator.SetBool(parDefense, false);////關閉防禦動畫
         canmove = true;//恢復能移動
     }
+
+    //翻滾睡覺
     IEnumerator waitRoll()
     {
+        print("翻滾睡覺");
         yield return new WaitForSeconds(0.5f);//等待幾秒
+        rig2D.velocity = new Vector2(0, 0);
+        stateRun = false;//不是跑步狀態
         animator.SetBool(parRun, false);////關閉跑步動畫
+        animator.SetBool(parRoll, false);////關閉翻滾動畫
         canmove = true;//恢復能移動
     }
     private void skill()
